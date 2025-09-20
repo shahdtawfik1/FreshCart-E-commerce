@@ -73,11 +73,12 @@ const Navbar = () => {
                 href="/cart"
                 className="relative p-1 text-[1.5rem] text-[#404247] hover:scale-110 transition-transform"
               >
-                {data?.numOfCartItems > 0 && (
-                  <Badge className="absolute -top-1 -left-1 w-4 h-4 flex items-center justify-center rounded-full bg-red-600 text-[10px]">
-                    {data?.numOfCartItems}
-                  </Badge>
-                )}
+                {(data?.numOfCartItems ?? 0) > 0 && (
+  <Badge className="absolute -top-1 -left-1 w-4 h-4 flex items-center justify-center rounded-full bg-red-600 text-[10px]">
+    {data?.numOfCartItems}
+  </Badge>
+)}
+
                 <FiShoppingCart />
               </Link>
 
