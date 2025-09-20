@@ -21,6 +21,7 @@ import { cartContext } from '@/context/contextCartProvider'
 import { ScaleLoader } from 'react-spinners'
 import { useRouter } from 'next/navigation'
 import { payOnlineAction } from '@/paymendAction/payOnline'
+import { CartProduct, Root } from '@/types/cartProductType'
 const Payment = () => {
     const [pay, setPay] = useState("cash")
     const [isLoading, setIsLoading] = useState(false)
@@ -80,7 +81,8 @@ const Payment = () => {
     async function payOnline(id: string, values: orderFormType) {
         try {
             // Prefer Paymob iframe flow
-            const amount = (cartData as any)?.data?.totalCartPrice ?? (cartData as any)?.totalCartPrice ?? 0
+            //@ts-ignore
+            const amount = (cartData as Root)?.data?.totalCartPrice ?? (cartData as CartProduct)?.totalCartPrice ?? 0
             const res = await fetch('/api/paymob', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -114,7 +116,7 @@ const Payment = () => {
             location.href = data.session.url
         } catch (err) {
             const error = err as OrderError
-            toast.error((error as any)?.message || 'Something went wrong', {
+            toast.error((error as OrderError)?.message || 'Something went wrong', {
                 position: 'top-right',
                 autoClose: 2000,
                 hideProgressBar: false,
