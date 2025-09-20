@@ -10,6 +10,11 @@ import { prodcut } from "@/types/product.type";
 import { Button } from "@/components/ui/button"; 
 import { contextAddToCard } from '@/context/ContextAddToCardProvider';
 
+// Define a lightweight error type
+interface ApiError {
+  message?: string
+}
+
 const MyCard = ({ product }: { product: prodcut }) => {
   const { mutate } = useContext(contextAddToCard)!;
   const [isPending, startTransition] = useTransition();
@@ -18,9 +23,9 @@ const MyCard = ({ product }: { product: prodcut }) => {
     startTransition(async () => {
       try {
         mutate(product._id);
-        //@ts-expect-error
-      } catch (err: any) {
-        console.error(err);
+      } catch (err) {
+        const error = err as ApiError;
+        console.error(error.message ?? error);
       }
     });
   };

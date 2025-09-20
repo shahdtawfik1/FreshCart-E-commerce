@@ -80,8 +80,9 @@ export default function PaymobModal() {
     try {
       setOpen(true)
       setLoading(true)
-      //@ts-expect-error
+      // @ts-expect-error totalCartPrice might be nested differently depending on API response
       const amount = cartData?.data?.totalCartPrice ?? cartData?.totalCartPrice ?? 0
+
       if (!amount || amount <= 0) {
         toast.error("Your cart is empty", { position: "top-right", autoClose: 1500 })
         setLoading(false)

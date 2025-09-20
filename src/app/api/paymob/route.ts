@@ -85,9 +85,12 @@ export async function POST(req: NextRequest) {
     const iframe_url = `https://accept.paymob.com/api/acceptance/iframes/${iframeId}?payment_token=${paymentToken}`
 
     return NextResponse.json({ iframe_url })
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Server error" }, { status: 500 })
+    
+  } catch (e: unknown) {
+    const error = e as { message?: string }
+    return NextResponse.json({ error: error.message || "Server error" }, { status: 500 })
   }
+  
 }
 
 

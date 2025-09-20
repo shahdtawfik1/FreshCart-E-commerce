@@ -81,7 +81,7 @@ const Payment = () => {
     async function payOnline(id: string, values: orderFormType) {
         try {
             // Prefer Paymob iframe flow
-            //@ts-expect-error
+            //@ts-expect-error data might not be there
             const amount = (cartData as Root)?.data?.totalCartPrice ?? (cartData as CartProduct)?.totalCartPrice ?? 0
             const res = await fetch('/api/paymob', {
                 method: 'POST',
