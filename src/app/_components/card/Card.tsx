@@ -18,7 +18,7 @@ const MyCard = ({ product }: { product: prodcut }) => {
     startTransition(async () => {
       try {
         mutate(product._id);
-        //@ts-ignore
+        //@ts-expect-error
       } catch (err: any) {
         console.error(err);
       }

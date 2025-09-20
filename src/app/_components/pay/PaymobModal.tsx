@@ -5,8 +5,73 @@ import { cartContext } from "@/context/contextCartProvider"
 import { ScaleLoader } from "react-spinners"
 import { toast } from "react-toastify"
 
+// ================= Interfaces =================
+export interface Root {
+  status: string
+  numOfCartItems: number
+  cartId: string
+  data: Data
+}
+
+export interface Data {
+  _id: string
+  cartOwner: string
+  products: CartProduct[]
+  createdAt: string
+  updatedAt: string
+  __v: number
+  totalCartPrice: number
+}
+
+export interface CartProduct {
+  count: number
+  _id: string
+  product: Product2
+  price: number
+}
+
+export interface Product2 {
+  subcategory: Subcategory[]
+  _id: string
+  title: string
+  quantity: number
+  imageCover: string
+  category: Category
+  brand: Brand
+  ratingsAverage: number
+  id: string
+}
+
+export interface Subcategory {
+  _id: string
+  name: string
+  slug: string
+  category: string
+}
+
+export interface Category {
+  _id: string
+  name: string
+  slug: string
+  image: string
+}
+
+export interface Brand {
+  _id: string
+  name: string
+  slug: string
+  image: string
+}
+
+// For error typing
+interface ApiError {
+  message?: string
+}
+
+// ==============================================
+
 export default function PaymobModal() {
-  const { data: cartData } = useContext(cartContext)!
+  const { data: cartData } = useContext(cartContext)! as { data: Root }
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [iframeUrl, setIframeUrl] = useState<string | null>(null)
@@ -15,12 +80,14 @@ export default function PaymobModal() {
     try {
       setOpen(true)
       setLoading(true)
-      const amount = (cartData as any)?.data?.totalCartPrice ?? (cartData as any)?.totalCartPrice ?? 0
+      //@ts-expect-error
+      const amount = cartData?.data?.totalCartPrice ?? cartData?.totalCartPrice ?? 0
       if (!amount || amount <= 0) {
         toast.error("Your cart is empty", { position: "top-right", autoClose: 1500 })
         setLoading(false)
         return
       }
+
       const res = await fetch("/api/paymob", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,11 +102,16 @@ export default function PaymobModal() {
           },
         }),
       })
+
       if (!res.ok) throw new Error("Failed to init payment")
       const json = await res.json()
       setIframeUrl(json?.iframe_url || null)
-    } catch (e: any) {
-      toast.error(e?.message || "Something went wrong", { position: "top-right", autoClose: 2000 })
+    } catch (e) {
+      const error = e as ApiError
+      toast.error(error.message || "Something went wrong", {
+        position: "top-right",
+        autoClose: 2000,
+      })
     } finally {
       setLoading(false)
     }
@@ -87,5 +159,3 @@ export default function PaymobModal() {
     </>
   )
 }
-
-
